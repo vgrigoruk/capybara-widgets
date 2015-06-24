@@ -32,12 +32,26 @@ module Capybara
         @root
       end
 
+      def element(*query)
+        root.find(*query)
+      end
+
+      def has_element?(*query)
+        root.has_selector?(*query)
+      end
+
       class << self
         def component(name, klass, *query)
           define_method name do
             component_root = query.length > 0 ? root.find(*query) : root
             klass.new(component_root)
           end
+        end
+
+        def element(name, *query)
+          define_method("#{name}!") { root.find(*query).click }
+          define_method("#{name}=") { |arg| root.find(*query).set(arg) }
+          define_method("has_#{name}?") { root.has_selector?(*query) }
         end
       end
 
