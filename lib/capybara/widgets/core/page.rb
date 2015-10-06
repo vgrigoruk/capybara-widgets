@@ -1,4 +1,5 @@
 require_relative 'widget'
+require_relative 'page_collection'
 require 'active_support/core_ext/class/attribute'
 
 module Capybara
@@ -6,13 +7,26 @@ module Capybara
     class Page < Widget
 
       class_attribute :path
+      class_attribute :path_matcher
+
+      def self.inherited(subclass)
+        PageCollection.instance.registry << subclass
+      end
 
       def initialize
         super(page)
       end
 
       def loaded?
-        true
+        result = opened?
+        if self.respond_to?(:elements_loaded?)
+          result = result && elements_loaded?
+        end
+        result
+      end
+
+      def opened?
+        current_path =~ %r{#{Regexp.quote(self.path)}}
       end
 
       def reload!

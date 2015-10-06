@@ -1,12 +1,9 @@
 require 'cucumber'
 require_relative '../helpers/string_helpers'
+require_relative '../core/dsl'
 
 World Capybara::Widgets::StringHelpers
-
-def within_widget(klass)
-  raise "#{klass.name} is not a subclass of Widget" unless klass < Capybara::Widgets::Widget
-  yield klass.new
-end
+World Capybara::Widgets::DSL
 
 def resolve_widget(widget_chain)
   elements = widget_chain.split('->')
@@ -17,7 +14,7 @@ def resolve_widget(widget_chain)
   apply_action_chain(top_widget, action_chain)
 end
 
-When(/^I click "([^"]*)" in a "([^"]*)"$/) do |action, widget_path|
+When(/^I click "([^"]*)" [o|i]n a "([^"]*)"$/) do |action, widget_path|
   target_widget = resolve_widget(widget_path)
   target_widget.send(to_widget_action(action, '!'))
 end

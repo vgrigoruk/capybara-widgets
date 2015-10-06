@@ -53,6 +53,12 @@ module Capybara
           define_method("#{name}=") { |arg| root.find(*query).set(arg) }
           define_method("has_#{name}?") { root.has_selector?(*query) }
         end
+
+        def required_element(*element_names)
+          define_method(:elements_loaded?) { element_names.each {|name| self.send("has_#{name}?")} }
+        end
+
+        alias_method :required_elements, :required_element
       end
 
       # delegate missing methods to the @root node
