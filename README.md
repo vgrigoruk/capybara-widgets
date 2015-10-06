@@ -1,5 +1,7 @@
 # Capybara::Widgets
 
+[![Build Status](https://travis-ci.org/vgrigoruk/capybara-widgets.svg?branch=master)](https://travis-ci.org/vgrigoruk/capybara-widgets)
+
 TODO: Write a gem description
 
 ## Installation
