@@ -33,8 +33,8 @@ describe Capybara::Widgets::Widget do
     end
     # Act and Assert
     widget = MyWidget.new
-    expect(widget.loaded).to be_false
+    expect(widget.loaded).to be false
     widget.root
-    expect(widget.loaded).to be_true
+    expect(widget.loaded).to be true
   end
 end
