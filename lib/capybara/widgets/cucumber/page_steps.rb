@@ -1,9 +1,11 @@
 require 'cucumber'
 require_relative '../helpers/string_helpers'
 require_relative '../helpers/async_helper'
+require_relative '../core/dsl'
 
 World Capybara::Widgets::StringHelpers
 World Capybara::Widgets::AsyncHelper
+World Capybara::Widgets::DSL
 
 Given(/^I am on a (.* page)/) do |page_name|
   within_widget(to_widget_class(page_name)) do |page|

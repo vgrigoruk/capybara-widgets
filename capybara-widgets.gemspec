@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Capybara::Widgets::VERSION
   spec.authors       = ["Vitalii Grygoruk"]
   spec.email         = ["vitalii[dot]grygoruk[at]gmail[dot]com"]
-  spec.summary       = %q{Page object implementation for Capybara}
-  spec.description   = %q{Another implementation of page object pattern for Capybara}
+  spec.summary       = %q{Page objects and page components for Capybara}
+  spec.description   = %q{Easily create well-structured page and ui component classes in your Capybara + Cucumber or Rspec tests}
   spec.homepage      = ""
   spec.license       = "MIT"
 
