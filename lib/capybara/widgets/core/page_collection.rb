@@ -18,14 +18,18 @@ module Capybara
       def current_page_class
         load_classes unless @loaded
         klass = registry.detect do |page_class|
-          if page_class.path_matcher
+          if page_class.path_matcher?
             if page_class.path_matcher.is_a?(Regexp)
               Capybara.current_path =~ page_class.path_matcher
             elsif page_class.path_matcher.is_a?(String)
               Capybara.current_path.include?(page_class.path_matcher)
             end
           else
-            Capybara.current_path.include?(page_class.path)
+            if page_class.path?
+              Capybara.current_path.include?(page_class.path)
+            else
+              false
+            end
           end
         end
         raise "Not found" if klass.nil?

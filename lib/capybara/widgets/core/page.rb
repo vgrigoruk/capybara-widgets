@@ -1,10 +1,13 @@
 require_relative 'widget'
 require_relative 'page_collection'
+require_relative '../helpers/async_helper'
 require 'active_support/core_ext/class/attribute'
 
 module Capybara
   module Widgets
     class Page < Widget
+
+      include Capybara::Widgets::AsyncHelper
 
       class_attribute :path
       class_attribute :path_matcher
@@ -26,7 +29,13 @@ module Capybara
       end
 
       def opened?
-        current_path =~ %r{#{Regexp.quote(self.path)}}
+        eventually do
+          result = self.path_matcher? ?
+              current_path =~ self.path_matcher :
+              current_path =~ %r{#{Regexp.quote(self.path)}}
+          raise "#{self.class.name} is not opened" unless result
+          result
+        end
       end
 
       def reload!

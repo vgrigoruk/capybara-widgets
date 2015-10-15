@@ -37,9 +37,9 @@ end
 # I open "My Report" from a "Reports page"
 # is mapped to:
 # ReportsPage.new.open!("My Report")
-When(/^I (.*) "([^"]*)" from a "([^"]*)"$/) do |action_name, action_param, widget_path|
+When(/^I open "([^"]*)" from a "([^"]*)"$/) do |action_param, widget_path|
   target_widget = resolve_widget(widget_path)
-  target_widget.send(to_widget_action(action_name, '!'), action_param)
+  target_widget.open!(action_param)
 end
 
 
@@ -57,8 +57,9 @@ end
 # is mapped to: expect(MyWidget.new).to have_no_action("Do it")
 # I should see "Do it" value in a "My page -> page component"
 # is mapped to: expect(MyPage.new.page_component).to have_value("Do it")
-And(/^I should( not)? see "([^"]*)" (.*) (?:in|on) a "([^"]*)"$/) do |negated, content, widget_action, widget_path|
+And(/^I should( not)? see( \d+)? "([^"]*)" (.*) (?:in|on) a "([^"]*)"$/) do |negated, count, content, widget_action, widget_path|
   negation_prefix = (negated && negated.length > 0) ? 'no_' : ''
+  expected_count = (count && count.length > 0) ? count.strip.to_i : 1
   target_widget = resolve_widget(widget_path)
   expect(target_widget).to send("have_#{negation_prefix}#{to_widget_action(widget_action)}", content)
 end
@@ -72,14 +73,19 @@ When(/^I fill in the following in a "([^"]*)"$/) do |widget_name, table|
   end
 end
 
-And(/^the "([^"]*)" should be "([^"]*)" in a "([^"]*)"$/) do |field_name, expected, widget_name|
+And(/^the "([^"]*)" should( not)? be "([^"]*)" in a "([^"]*)"$/) do |field_name, negated, expected, widget_name|
   within_widget(to_widget_class(widget_name)) do |widget|
     action = to_widget_action(field_name)
-    if widget.respond_to? "has_#{action}?"
-      expect(widget.send("has_#{action}?", expected)).to be_true
+    negation_prefix = (negated && negated.length > 0) ? 'no_' : ''
+    if widget.respond_to? "has_#{negation_prefix}#{action}?"
+      expect(widget.send("has_#{negation_prefix}#{action}?", expected)).to be_truthy
     else
       actual = widget.send(action)
-      expect(actual).to eq(expected)
+      if (negated && negated.length > 0)
+        expect(actual).not_to eq(expected)
+      else
+        expect(actual).to eq(expected)
+      end
     end
   end
 end

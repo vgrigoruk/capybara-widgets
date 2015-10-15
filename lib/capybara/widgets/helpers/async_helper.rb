@@ -2,7 +2,7 @@ module Capybara
   module Widgets
     module AsyncHelper
       def eventually(options = {})
-        timeout = options[:timeout] || 10
+        timeout = options[:timeout] || Capybara.default_max_wait_time
         interval = options[:interval] || 0.1
         time_limit = Time.now + timeout
         loop do
