@@ -22,6 +22,9 @@ module Capybara
 
       def loaded?
         result = opened?
+        if self.respond_to?(:components_loaded?)
+          result = result && components_loaded?
+        end
         if self.respond_to?(:elements_loaded?)
           result = result && elements_loaded?
         end

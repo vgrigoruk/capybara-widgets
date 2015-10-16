@@ -52,15 +52,30 @@ module Capybara
           define_method("#{name}!") { root.find(*query).click }
           define_method(name) { root.find(*query) }
           define_method("#{name}=") { |arg| root.find(*query).set(arg) }
-          define_method("has_#{name}?"){|*args| root.has_selector?(*query, *args) }
-          define_method("has_no_#{name}?"){|*args| root.has_no_selector?(*query, *args) }
+          define_method("has_#{name}?") { |*args| root.has_selector?(*query, *args) }
+          define_method("has_no_#{name}?") { |*args| root.has_no_selector?(*query, *args) }
         end
 
         def required_element(*element_names)
-          define_method(:elements_loaded?) { element_names.map {|name| self.send("has_#{name}?")}.count(false) == 0 }
+          define_method(:elements_loaded?) { element_names.map { |name| self.send("has_#{name}?") }.count(false) == 0 }
         end
 
         alias_method :required_elements, :required_element
+
+        def required_component(*component_names)
+          define_method(:components_loaded?) do
+            component_names.map do |name|
+              component = self.send(name)
+              if component.respond_to?(:elements_loaded?)
+                component.elements_loaded?
+              else
+                true
+              end
+            end.count(false) == 0
+          end
+        end
+
+        alias_method :required_components, :required_component
       end
 
       # delegate missing methods to the @root node
