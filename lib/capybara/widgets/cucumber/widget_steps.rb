@@ -1,8 +1,10 @@
 require 'cucumber'
 require_relative '../helpers/string_helpers'
+require_relative '../helpers/async_helper'
 require_relative '../core/dsl'
 
 World Capybara::Widgets::StringHelpers
+World Capybara::Widgets::AsyncHelper
 World Capybara::Widgets::DSL
 
 def resolve_widget(widget_chain)

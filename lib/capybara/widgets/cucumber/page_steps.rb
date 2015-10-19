@@ -43,3 +43,6 @@ And(/^I should( not)? see( \d+)? "([^"]*)" ([^"]*s?)$/) do |negated, count, cont
   end
 end
 
+When(/^I close a window with "([^"]*)" title$/) do |title|
+  within_window(-> { page.title == title }) { page.current_window.close }
+end

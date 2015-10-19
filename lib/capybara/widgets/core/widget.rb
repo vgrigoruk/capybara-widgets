@@ -1,9 +1,11 @@
 require 'capybara/dsl'
+require_relative '../helpers/async_helper'
 
 module Capybara
   module Widgets
     class Widget
       include Capybara::DSL
+      include Capybara::Widgets::AsyncHelper
 
       def initialize(*search_scope)
         case search_scope.length
@@ -76,6 +78,10 @@ module Capybara
         end
 
         alias_method :required_components, :required_component
+      end
+
+      def displayed?
+        root.visible?
       end
 
       # delegate missing methods to the @root node
