@@ -11,6 +11,7 @@ module Capybara
 
       class_attribute :path
       class_attribute :path_matcher
+      class_attribute :url_matcher
 
       def self.inherited(subclass)
         PageCollection.instance.registry << subclass
@@ -33,9 +34,14 @@ module Capybara
 
       def opened?
         eventually do
-          result = self.path_matcher? ?
-              current_path =~ self.path_matcher :
-              current_path =~ %r{#{Regexp.quote(self.path)}}
+          result = if self.path_matcher?
+                     current_path =~ self.path_matcher
+                   elsif self.url_matcher?
+                     current_url =~ self.url_matcher
+                   else
+                     self.path?
+                     current_path =~ %r{#{Regexp.quote(self.path)}}
+                   end
           raise "#{self.class.name} is not opened" unless result
           result
         end

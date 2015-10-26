@@ -44,6 +44,14 @@ When(/^I open "([^"]*)" from a "([^"]*)"$/) do |action_param, widget_path|
   target_widget.open!(action_param)
 end
 
+# Example:
+# I select "My first account" in "Account chooser"
+# is mapped to:
+# AccountChooser.new.select!("My first account")
+When(/^I select "([^"]*)" (?:in|on)(?: an?)? "([^"]*)"$/) do |action_param, widget_path|
+  target_widget = resolve_widget(widget_path)
+  target_widget.select!(action_param)
+end
 
 And(/^I should see the following "([^"]*)" in a "([^"]*)"$/) do |field_name, widget_path, table|
   expected_values = table.raw.flatten
