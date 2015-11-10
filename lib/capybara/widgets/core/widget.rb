@@ -44,8 +44,8 @@ module Capybara
 
       class << self
         def component(name, klass, *query)
-          define_method name do
-            component_root = query.length > 0 ? root.find(*query) : root
+          define_method name do |*args|
+            component_root = query.length > 0 ? root.find(*query, *args) : root
             klass.new(component_root)
           end
         end
