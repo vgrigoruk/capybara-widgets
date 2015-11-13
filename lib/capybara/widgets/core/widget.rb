@@ -50,12 +50,22 @@ module Capybara
           end
         end
 
+        def resolve(*query_with_args)
+          query = query_with_args.shift
+          args = query_with_args
+          if query.is_a?(Proc)
+            return query.(*args)
+          else
+            return query, *args
+          end
+        end
+
         def element(name, *query)
-          define_method("#{name}!") { root.find(*query).click }
-          define_method(name) { root.find(*query) }
-          define_method("#{name}=") { |arg| root.find(*query).set(arg) }
-          define_method("has_#{name}?") { |*args| root.has_selector?(*query, *args) }
-          define_method("has_no_#{name}?") { |*args| root.has_no_selector?(*query, *args) }
+          define_method("#{name}!") { |*args| root.find(*Widget.resolve(*query, *args)).click }
+          define_method(name) { |*args| root.find(*Widget.resolve(*query, *args)) }
+          define_method("#{name}=") { |arg| root.find(*Widget.resolve(*query)).set(arg) }
+          define_method("has_#{name}?") { |*args| root.has_selector?(*Widget.resolve(*query, *args)) }
+          define_method("has_no_#{name}?") { |*args| root.has_no_selector?(*Widget.resolve(*query, *args)) }
         end
 
         def required_element(*element_names)
