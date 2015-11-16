@@ -24,26 +24,21 @@ module Capybara
       def loaded?
         result = opened?
         if self.respond_to?(:components_loaded?)
-          result = result && components_loaded?
+          result = result && self.components_loaded?
         end
         if self.respond_to?(:elements_loaded?)
-          result = result && elements_loaded?
+          result = result && self.elements_loaded?
         end
         result
       end
 
       def opened?
-        eventually do
-          result = if self.path_matcher?
-                     current_path =~ self.path_matcher
-                   elsif self.url_matcher?
-                     current_url =~ self.url_matcher
-                   else
-                     self.path?
-                     current_path =~ %r{#{Regexp.quote(self.path)}}
-                   end
-          raise "#{self.class.name} is not opened" unless result
-          result
+        if self.path_matcher?
+          has_current_path?(self.path_matcher, only_path: true)
+        elsif self.url_matcher?
+          has_current_path?(self.url_matcher, url: true)
+        else
+          has_current_path?(%r{#{Regexp.quote(self.path)}}, only_path: true)
         end
       end
 
@@ -61,4 +56,5 @@ module Capybara
     end
   end
 end
+
 
