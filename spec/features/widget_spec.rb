@@ -5,7 +5,7 @@ describe Capybara::Widgets::Widget do
   let(:stub_node) { Capybara::Node::Base.new(nil, nil) }
 
   it 'has capybara page as a default root node' do
-    expect(subject.root).to eq(page)
+    expect(klass.new.root).to eq(page)
   end
 
   it 'can be initialized with Capybara::Node::Base' do
@@ -26,7 +26,7 @@ describe Capybara::Widgets::Widget do
 
   it 'can have lazy-initialized root node' do
     # Arrange 
-    class MyWidget < klass   
+    class MyWidget < Capybara::Widgets::Widget
       attr_accessor :loaded
       def initialize; self.loaded = false; end
       def narrow; self.loaded = true; @root; end

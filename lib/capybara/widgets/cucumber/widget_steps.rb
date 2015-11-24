@@ -21,12 +21,12 @@ When(/^I click "([^"]*)" [o|i]n a "([^"]*)"$/) do |action, widget_path|
   target_widget.send(to_widget_action(action, '!'))
 end
 
-Then(/^the "([^"]*)" should( not)? be displayed$/) do |widget_path, negated|
+Then(/^the "([^"]*)" should( not)? (be .*)$/) do |widget_path, negated, action|
   target_widget = resolve_widget(widget_path)
   if negated
-    expect(target_widget).to be_not_displayed, "#{target_widget} should not be displayed"
+    expect(target_widget).not_to send(to_widget_action(action))
   else
-    expect(target_widget).to be_displayed, "#{target_widget} should be displayed"
+    expect(target_widget).to send(to_widget_action(action))
   end
 end
 

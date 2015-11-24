@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Vitalii Grygoruk"]
   spec.email         = ["vitalii[dot]grygoruk[at]gmail[dot]com"]
   spec.summary       = %q{Page objects and page components for Capybara}
-  spec.description   = %q{Easily create well-structured page and ui component classes in your Capybara + Cucumber or Rspec tests}
+  spec.description   = %q{Easily create well-structured page and ui component classes in your Capybara, Cucumber/RSpec tests}
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -20,9 +20,10 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec", "~> 3.2"
-  spec.add_development_dependency "cucumber"
 
   spec.add_dependency "capybara", "~> 2.0"
   spec.add_dependency "activesupport"
+  spec.add_dependency "rspec", "~> 3.2"
+  spec.add_dependency "rspec-wait"
+  spec.add_development_dependency "cucumber"
 end

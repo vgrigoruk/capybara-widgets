@@ -29,43 +29,51 @@ module Capybara
         @root
       end
 
-      # override this method if you need to narrow down search context for a particular UI widget / block
+      # @deprecated, use :root_element method instead
       def narrow
         @root
       end
 
-      def element(*query)
-        root.find(*query)
-      end
-
-      def has_element?(*query)
-        root.has_selector?(*query)
+      def resolve(*query_with_args)
+        query = query_with_args.shift
+        args = query_with_args
+        if query.is_a?(Proc)
+          # resolve lambda selector in scope of widget instance
+          return self.instance_exec(*args, &query)
+        else
+          return query, *args
+        end
       end
 
       class << self
-        def component(name, klass, *query)
-          define_method name do |*args|
-            component_root = query.length > 0 ? root.find(*query, *args) : root
-            klass.new(component_root)
-          end
+
+        ## override :narrow method if :root_element is used in a class
+        def root_element(*query)
+          define_method(:root_query) { resolve(*query) }
+          define_method(:narrow) { root.find(*resolve(*query)) }
+          define_method(:has_root_element?) { page.has_selector?(*resolve(*query))}
+          define_method(:has_no_root_element?) { page.has_no_selector?(*resolve(*query))}
         end
 
-        def resolve(*query_with_args)
-          query = query_with_args.shift
-          args = query_with_args
-          if query.is_a?(Proc)
-            return query.(*args)
-          else
-            return query, *args
+        def component(name, klass, *query)
+          define_method name do |*args|
+            component_root = query.length > 0 ? root.find(*resolve(*query, *args)) : root
+            klass.new(component_root)
+          end
+          define_method "has_#{name}?".to_sym do |*args|
+            root.has_selector?(*resolve(*query, *args))
+          end
+          define_method "has_no_#{name}?" do |*args|
+            root.has_no_selector?(*resolve(*query, *args))
           end
         end
 
         def element(name, *query)
-          define_method("#{name}!") { |*args| root.find(*Widget.resolve(*query, *args)).click }
-          define_method(name) { |*args| root.find(*Widget.resolve(*query, *args)) }
-          define_method("#{name}=") { |arg| root.find(*Widget.resolve(*query)).set(arg) }
-          define_method("has_#{name}?") { |*args| root.has_selector?(*Widget.resolve(*query, *args)) }
-          define_method("has_no_#{name}?") { |*args| root.has_no_selector?(*Widget.resolve(*query, *args)) }
+          define_method("#{name}!") { |*args| root.find(*resolve(*query, *args)).click }
+          define_method(name) { |*args| root.find(*resolve(*query, *args)) }
+          define_method("#{name}=") { |arg| root.find(*resolve(*query)).set(arg) }
+          define_method("has_#{name}?") { |*args| root.has_selector?(*resolve(*query, *args)) }
+          define_method("has_no_#{name}?") { |*args| root.has_no_selector?(*resolve(*query, *args)) }
         end
 
         def required_element(*element_names)
@@ -88,10 +96,6 @@ module Capybara
         end
 
         alias_method :required_components, :required_component
-      end
-
-      def displayed?
-        root.visible?
       end
 
       # delegate missing methods to the @root node

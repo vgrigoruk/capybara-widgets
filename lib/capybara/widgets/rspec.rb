@@ -21,6 +21,24 @@ module Capybara
           "Expected that '#{widget.class.name}' does not have '#{element}' element"
         end
       end
+
+      RSpec::Matchers.define :be_visible do
+        match do |widget|
+          widget.has_root_element?
+        end
+
+        match_when_negated do |widget|
+          widget.has_no_root_element?
+        end
+
+        failure_message do |widget|
+          "Expected that '#{widget.class.name}' to be visible"
+        end
+
+        failure_message_when_negated do |widget|
+          "Expected that '#{widget.class.name}' not to be visible"
+        end
+      end
     end
   end
 end
