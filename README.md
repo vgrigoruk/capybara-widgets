@@ -2,23 +2,19 @@
 
 [![Build Status](https://travis-ci.org/vgrigoruk/capybara-widgets.svg?branch=master)](https://travis-ci.org/vgrigoruk/capybara-widgets)
 
-TODO: Write a gem description
+Page objects / fragments implementation for Capybara.
+- Support lambda element selectors.
+- RSpec & Cucumber integration.
+- Work for web & mobile (appium driver).
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add this line to your application's Gemfile and run `bundle`:
 
 ```ruby
 gem 'capybara-widgets'
 ```
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install capybara-widgets
 
 ## Usage
 
