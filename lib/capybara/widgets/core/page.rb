@@ -53,6 +53,17 @@ module Capybara
         loaded?
         self
       end
+
+      class << self
+        def iframe(name, page_class, selector)
+          define_method name do |&block|
+            raise "No iframe found: #{selector}" unless page.has_selector?(selector)
+            within_frame page.find(selector) do
+              block.call page_class.new
+            end
+          end
+        end
+      end
     end
   end
 end
