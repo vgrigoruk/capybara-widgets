@@ -1,11 +1,29 @@
 require 'capybara/dsl'
+require 'active_support/core_ext/class/attribute'
 require_relative '../helpers/async_helper'
+require_relative 'execution_hooks'
+
 
 module Capybara
   module Widgets
     class Widget
       include Capybara::DSL
       include Capybara::Widgets::AsyncHelper
+
+      include ExecutionHooks
+
+      before_hook :set_target_app,
+                  ignore: [
+                      :driver, :driver=, :driver?,
+                      :session_name, :session_name=, :session_name?,
+                      :default_selector, :default_selector=, :default_selector?
+                  ]
+
+      class_attribute :driver, :session_name, :default_selector
+
+      self.driver = Capybara.current_driver
+      self.session_name = Capybara.session_name
+      self.default_selector = Capybara.default_selector
 
       def initialize(*search_scope)
         case search_scope.length
@@ -104,6 +122,17 @@ module Capybara
           root.send(method_sym, *arguments, &block)
         else
           super
+        end
+      end
+
+      private
+
+      def set_target_app
+        if Capybara.current_driver != driver || Capybara.session_name != session_name || Capybara.default_selector != default_selector
+          puts "Switching target: #{driver}:#{session_name}:#{default_selector}"
+          Capybara.current_driver = self.driver
+          Capybara.session_name = self.session_name
+          Capybara.default_selector = self.default_selector
         end
       end
     end
